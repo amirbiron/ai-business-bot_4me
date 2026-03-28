@@ -96,9 +96,7 @@ async def _send_html_safe(bot, chat_id: int, text: str, **kwargs):
 def _get_main_keyboard() -> ReplyKeyboardMarkup:
     """Create the main menu keyboard with action buttons."""
     keyboard = [
-        [KeyboardButton(BUTTON_PRICE_LIST), KeyboardButton(BUTTON_BOOKING)],
-        [KeyboardButton(BUTTON_LOCATION), KeyboardButton(BUTTON_SAVE_CONTACT)],
-        [KeyboardButton(BUTTON_AGENT)],
+        [KeyboardButton(BUTTON_PRICE_LIST)],
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
@@ -299,13 +297,11 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # _html.escape לערכי קונפיג בודדים; sanitize_telegram_html לפלט LLM שלם
     welcome_text = (
-        f"👋 ברוכים הבאים ל-<b>{_html.escape(BUSINESS_NAME)}</b>!\n\n"
-        f"אני העוזר הווירטואלי שלכם. אני יכול לעזור לכם עם:\n"
-        f"• מידע על השירותים והמחירים שלנו\n"
-        f"• בקשת תורים\n"
-        f"• מענה על שאלות\n"
-        f"• חיבור לנציג אנושי\n\n"
-        f"פשוט כתבו את השאלה שלכם או השתמשו בכפתורים למטה! 👇"
+        "👋 ברוכים הבאים ל-<b>Chatbot</b>!\n\n"
+        "אני יכול לעזור לכם עם:\n"
+        "• מידע על השירותים והמחירים שלנו\n"
+        "• מענה על שאלות חופשיות\n\n"
+        "פשוט כתבו את השאלה שלכם או השתמשו בכפתור למטה! 👇"
     )
 
     if referral_registered:
@@ -391,15 +387,11 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     help_text = (
         "🤖 <b>איך להשתמש בבוט:</b>\n\n"
         "• פשוט כתבו כל שאלה ואעשה כמיטב יכולתי לענות!\n"
-        "• לחצו על <b>📋 מחירון</b> כדי לראות את השירותים והמחירים\n"
-        "• לחצו על <b>📅 בקשת תור</b> כדי לבקש תור\n"
-        "• לחצו על <b>📍 שליחת מיקום</b> כדי לקבל את הכתובת והמפה שלנו\n"
-        "• לחצו על <b>📇 שמור איש קשר</b> כדי לשמור אותנו באנשי הקשר\n"
-        "• לחצו על <b>👤 דברו עם נציג</b> כדי לדבר עם נציג אמיתי\n\n"
+        "• לחצו על <b>📋 מחירון</b> כדי לראות את השירותים והמחירים\n\n"
         "אפשר גם לשאול שאלות כמו:\n"
-        '  <i>"מה שעות הפתיחה שלכם?"</i>\n'
-        '  <i>"האם אתם מציעים צביעת שיער?"</i>\n'
-        '  <i>"מה מדיניות הביטולים שלכם?"</i>'
+        '  <i>"מה השירותים שלכם?"</i>\n'
+        '  <i>"כמה עולה בוט לידים?"</i>\n'
+        '  <i>"תוך כמה זמן ההזמנות מוכנות?"</i>'
     )
 
     await update.message.reply_text(
