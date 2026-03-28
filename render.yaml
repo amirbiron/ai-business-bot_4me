@@ -32,6 +32,10 @@ services:
       - key: OPENAI_API_KEY
         sync: false
 
+      # Google Gemini (or other OpenAI-compatible provider) base URL
+      - key: OPENAI_BASE_URL
+        value: "https://generativelanguage.googleapis.com/v1beta/openai/"
+
       # Optional: enable Telegram bot
       - key: TELEGRAM_BOT_TOKEN
         sync: false

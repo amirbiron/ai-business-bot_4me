@@ -229,8 +229,15 @@ def _sanitize_business_prompt(text: str) -> str:
 
     הפרומפט העסקי מרשה טקסט חופשי יותר מביטויים מותאמים (כולל מקפים,
     כוכביות ותבליטים), אבל חוסם ניסיונות prompt injection.
+    מריץ בלולאה עד שהפלט יציב — מונע עקיפה עם קלט כמו "ssystem:ystem:".
     """
-    cleaned = _BUSINESS_PROMPT_INJECTION_PATTERNS.sub("", text).strip()
+    cleaned = text
+    while True:
+        result = _BUSINESS_PROMPT_INJECTION_PATTERNS.sub("", cleaned)
+        if result == cleaned:
+            break
+        cleaned = result
+    cleaned = cleaned.strip()
     if len(cleaned) > _BUSINESS_PROMPT_MAX_LENGTH:
         cleaned = cleaned[:_BUSINESS_PROMPT_MAX_LENGTH].rsplit(" ", 1)[0]
     return cleaned
