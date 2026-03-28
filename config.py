@@ -30,9 +30,10 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_OWNER_CHAT_ID = os.getenv("TELEGRAM_OWNER_CHAT_ID", "")
 
 # ─── OpenAI / LLM ───────────────────────────────────────────────────────────
-# ניתן לשנות את המודל דרך משתנה סביבה OPENAI_MODEL (למשל gpt-4o, gpt-4.1)
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+# ניתן לשנות את המודל דרך משתנה סביבה OPENAI_MODEL (למשל gpt-4o, gemini-2.5-flash)
+# לספקים חיצוניים (Google Gemini וכו') — יש להגדיר גם OPENAI_BASE_URL
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gemini-2.5-flash")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-004")
 
 # ─── RAG Settings ────────────────────────────────────────────────────────────
 RAG_TOP_K = int(os.getenv("RAG_TOP_K", "10"))
