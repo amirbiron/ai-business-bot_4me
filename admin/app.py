@@ -1018,10 +1018,11 @@ def create_admin_app() -> Flask:
         if request.method == "POST":
             tone = request.form.get("tone", "friendly").strip()
             custom_phrases = request.form.get("custom_phrases", "").strip()
+            business_system_prompt = request.form.get("business_system_prompt", "").strip()
             if tone not in TONE_DEFINITIONS:
                 flash("טון לא חוקי.", "danger")
             else:
-                db.update_bot_settings(tone, custom_phrases)
+                db.update_bot_settings(tone, custom_phrases, business_system_prompt)
                 _audit_log("bot_settings", f"tone={tone}")
                 flash("הגדרות הבוט עודכנו בהצלחה!", "success")
             return redirect(url_for("bot_settings"))
@@ -1032,6 +1033,7 @@ def create_admin_app() -> Flask:
             tone=settings.get("tone", "friendly"),
             custom_phrases=settings.get("custom_phrases", ""),
             follow_up_enabled=FOLLOW_UP_ENABLED,
+            business_system_prompt=settings.get("business_system_prompt", ""),
         )
         return render_template(
             "bot_settings.html",

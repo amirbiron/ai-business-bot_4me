@@ -55,6 +55,26 @@
                           placeholder='למשל: "אהלן ברוכים הבאים", "בשמחה רבה", "תמיד כאן בשבילכם"'>{{ settings.custom_phrases }}</textarea>
             </div>
 
+            <!-- פרומפט עסקי מותאם -->
+            <div class="form-group" style="margin-bottom: var(--space-md);">
+                <label class="form-label" for="business_system_prompt" style="font-weight: 600; font-size: 1.05rem;">
+                    <i class="bi bi-file-earmark-text"></i> פרומפט עסקי מותאם (אופציונלי)
+                </label>
+                <div class="text-small text-muted" style="margin-bottom: var(--space-xs);">
+                    כאן אפשר להגדיר הנחיות מותאמות אישית לבוט — זהות, סגנון דיבור, כללי התנהגות, מידע עסקי ודוגמאות לשיחות.
+                    הטקסט מוזרק ישירות לפרומפט המערכת ומשפיע על אופן התנהגות הבוט מול לקוחות.
+                </div>
+                <textarea class="form-control"
+                          id="business_system_prompt"
+                          name="business_system_prompt"
+                          rows="12"
+                          style="font-size: 0.9rem; line-height: 1.6; direction: rtl;"
+                          placeholder="למשל: אתה נציג AI של העסק שלי. דבר בעברית פשוטה וטבעית, אל תישמע כמו בוט...">{{ settings.business_system_prompt }}</textarea>
+                <div class="text-small text-muted" style="margin-top: var(--space-xs);">
+                    עד 8,000 תווים. ההנחיות כאן משלימות את הטון שנבחר למעלה — לא מחליפות אותו.
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-primary">
                 <i class="bi bi-check-lg"></i> שמירת הגדרות
             </button>
