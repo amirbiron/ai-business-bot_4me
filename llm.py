@@ -59,6 +59,7 @@ def _build_messages(
             tone=settings.get("tone", "friendly"),
             custom_phrases=settings.get("custom_phrases", ""),
             follow_up_enabled=FOLLOW_UP_ENABLED,
+            business_system_prompt=settings.get("business_system_prompt", ""),
         )
     except Exception as e:
         # fallback לפרומפט משופר עם ברירות מחדל (ללא תלות ב-DB)

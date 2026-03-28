@@ -30,9 +30,10 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_OWNER_CHAT_ID = os.getenv("TELEGRAM_OWNER_CHAT_ID", "")
 
 # ─── OpenAI / LLM ───────────────────────────────────────────────────────────
-# ניתן לשנות את המודל דרך משתנה סביבה OPENAI_MODEL (למשל gpt-4o, gpt-4.1)
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4.1-mini")
-EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
+# ניתן לשנות את המודל דרך משתנה סביבה OPENAI_MODEL (למשל gpt-4o, gemini-2.5-flash)
+# לספקים חיצוניים (Google Gemini וכו') — יש להגדיר גם OPENAI_BASE_URL
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gemini-3.1-pro-preview")
+EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-004")
 
 # ─── RAG Settings ────────────────────────────────────────────────────────────
 RAG_TOP_K = int(os.getenv("RAG_TOP_K", "10"))
@@ -204,6 +205,15 @@ _CUSTOM_PHRASES_PATTERN = re.compile(
 # אורך מקסימלי לביטויים מותאמים — הגנה מפני הצפת פרומפט
 _CUSTOM_PHRASES_MAX_LENGTH = 500
 
+# אורך מקסימלי לפרומפט עסקי מותאם — מרווח יותר כי זה פרומפט שלם
+_BUSINESS_PROMPT_MAX_LENGTH = 8000
+
+# תבניות שמנסות לשנות הוראות מערכת — חסימה בפרומפט עסקי
+_BUSINESS_PROMPT_INJECTION_PATTERNS = re.compile(
+    r"(system:|מערכת:|ignore previous|התעלם מהוראות|you are now|אתה עכשיו|new instructions|הוראות חדשות)",
+    re.IGNORECASE,
+)
+
 
 def _sanitize_custom_phrases(text: str) -> str:
     """סניטציה של ביטויים מותאמים אישית — מסיר תווים חשודים ומגביל אורך."""
@@ -214,15 +224,36 @@ def _sanitize_custom_phrases(text: str) -> str:
     return cleaned
 
 
+def _sanitize_business_prompt(text: str) -> str:
+    """סניטציה של פרומפט עסקי מותאם — מסיר תבניות injection ומגביל אורך.
+
+    הפרומפט העסקי מרשה טקסט חופשי יותר מביטויים מותאמים (כולל מקפים,
+    כוכביות ותבליטים), אבל חוסם ניסיונות prompt injection.
+    מריץ בלולאה עד שהפלט יציב — מונע עקיפה עם קלט כמו "ssystem:ystem:".
+    """
+    cleaned = text
+    while True:
+        result = _BUSINESS_PROMPT_INJECTION_PATTERNS.sub("", cleaned)
+        if result == cleaned:
+            break
+        cleaned = result
+    cleaned = cleaned.strip()
+    if len(cleaned) > _BUSINESS_PROMPT_MAX_LENGTH:
+        cleaned = cleaned[:_BUSINESS_PROMPT_MAX_LENGTH].rsplit(" ", 1)[0]
+    return cleaned
+
+
 def build_system_prompt(
     tone: str = "friendly",
     custom_phrases: str = "",
     follow_up_enabled: bool = False,
+    business_system_prompt: str = "",
 ) -> str:
     """בניית פרומפט מערכת משופר המשלב הנחיות טון, DNA עסקי וכללי התנהגות.
 
     משלב את הפרומפט המשופר (אנושי, מותאם טון) עם עשרת הכללים המקוריים.
     כשהפיצ'ר שאלות המשך פעיל — כלל 11 מוזרק לאחר כלל 10, לפני סקשן המגבלות.
+    כשיש פרומפט עסקי מותאם — הוא מוזרק כסקשן נפרד אחרי הנחיות השיחה.
     """
     effective_tone = tone if tone in TONE_PROFILES else "friendly"
     profile = TONE_PROFILES[effective_tone]
@@ -240,6 +271,16 @@ def build_system_prompt(
             dna_section = (
                 "\nביטויים אופייניים לעסק (השתמש בהם באופן טבעי בשיחה):\n"
                 f"{safe_phrases}\n"
+            )
+
+    # פרומפט עסקי מותאם — הנחיות אישיות, טון, דוגמאות ומידע עסקי
+    business_prompt_section = ""
+    if business_system_prompt and business_system_prompt.strip():
+        safe_business_prompt = _sanitize_business_prompt(business_system_prompt)
+        if safe_business_prompt:
+            business_prompt_section = (
+                "\n── הנחיות עסקיות מותאמות ──\n"
+                f"{safe_business_prompt}\n"
             )
 
     # כלל 11 — שאלות המשך (מוזרק רק כשהפיצ'ר פעיל, מיד אחרי כלל 10)
@@ -274,7 +315,7 @@ def build_system_prompt(
 
 ── הנחיות לשיחה ──
 {conv_guidelines}
-{dna_section}
+{dna_section}{business_prompt_section}
 ── עיצוב טקסט ──
 עצב את תשובותיך באמצעות תגי HTML של טלגרם לקריאות מיטבית:
 - <b>טקסט מודגש</b> — לכותרות, שמות קטגוריות ושמות שירותים

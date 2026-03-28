@@ -3,10 +3,15 @@ Shared OpenAI client factory.
 
 We keep a single lazily-initialized client instance so that modules don't
 duplicate connection pools and configuration.
+
+תומך בספקים חיצוניים (Google Gemini, OpenRouter וכו') דרך משתנה סביבה
+OPENAI_BASE_URL שמשנה את ה-endpoint של ה-API.
 """
 
 from __future__ import annotations
 
+import logging
+import os
 import threading
 from typing import Optional
 
@@ -14,6 +19,8 @@ try:
     from openai import OpenAI  # type: ignore
 except ImportError:  # pragma: no cover
     OpenAI = None  # type: ignore
+
+logger = logging.getLogger(__name__)
 
 _client: Optional[object] = None
 _client_lock = threading.Lock()
@@ -27,5 +34,9 @@ def get_openai_client():
             if _client is None:
                 if OpenAI is None:
                     raise RuntimeError("OpenAI client is unavailable (openai package not installed).")
-                _client = OpenAI()
+                # תמיכה בספקים חיצוניים — base_url נקרא מ-OPENAI_BASE_URL
+                base_url = os.getenv("OPENAI_BASE_URL", "").strip() or None
+                if base_url:
+                    logger.info("Using custom LLM endpoint: %s", base_url)
+                _client = OpenAI(base_url=base_url) if base_url else OpenAI()
     return _client

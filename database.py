@@ -1045,26 +1045,29 @@ VALID_TONES = set(TONE_DEFINITIONS.keys())
 
 
 def get_bot_settings() -> dict:
-    """קבלת הגדרות הבוט — טון תקשורת וביטויים מותאמים."""
+    """קבלת הגדרות הבוט — טון תקשורת, ביטויים מותאמים ופרומפט עסקי."""
     with get_connection() as conn:
         row = conn.execute("SELECT * FROM bot_settings WHERE id = 1").fetchone()
         if row:
             return dict(row)
         # fallback — לא אמור לקרות כי init_db מכניס שורה
-        return {"id": 1, "tone": "friendly", "custom_phrases": "", "updated_at": ""}
+        return {"id": 1, "tone": "friendly", "custom_phrases": "",
+                "business_system_prompt": "", "updated_at": ""}
 
 
-def update_bot_settings(tone: str, custom_phrases: str = ""):
-    """עדכון הגדרות הבוט — טון תקשורת וביטויים מותאמים."""
+def update_bot_settings(tone: str, custom_phrases: str = "",
+                        business_system_prompt: str = ""):
+    """עדכון הגדרות הבוט — טון תקשורת, ביטויים מותאמים ופרומפט עסקי."""
     if tone not in VALID_TONES:
         logger.error("Invalid tone value: %s", tone)
         return
     with get_connection() as conn:
         conn.execute(
             """UPDATE bot_settings
-               SET tone = ?, custom_phrases = ?, updated_at = datetime('now')
+               SET tone = ?, custom_phrases = ?, business_system_prompt = ?,
+                   updated_at = datetime('now')
                WHERE id = 1""",
-            (tone, custom_phrases),
+            (tone, custom_phrases, business_system_prompt),
         )
 
 

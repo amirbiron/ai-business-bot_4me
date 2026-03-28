@@ -113,6 +113,9 @@ def run_migrations(conn) -> None:
 
     _ensure_column(conn, "referral_codes", "sent", "INTEGER DEFAULT 0")
 
+    # ─── bot_settings: פרומפט מערכת מותאם לעסק ─────────────────────────────
+    _ensure_column(conn, "bot_settings", "business_system_prompt", "TEXT DEFAULT ''")
+
     # ─── live_chats: עמודת updated_at למעקב אחר פעילות אחרונה ─────────────
     _ensure_column(conn, "live_chats", "updated_at", "TEXT DEFAULT ''")
     # Back-fill: שורות קיימות מקבלות את started_at כ-updated_at
