@@ -32,7 +32,7 @@ TELEGRAM_OWNER_CHAT_ID = os.getenv("TELEGRAM_OWNER_CHAT_ID", "")
 # ─── OpenAI / LLM ───────────────────────────────────────────────────────────
 # ניתן לשנות את המודל דרך משתנה סביבה OPENAI_MODEL (למשל gpt-4o, gemini-2.5-flash)
 # לספקים חיצוניים (Google Gemini וכו') — יש להגדיר גם OPENAI_BASE_URL
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gemini-2.5-flash")
+OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gemini-3.1-pro-preview")
 EMBEDDING_MODEL = os.getenv("EMBEDDING_MODEL", "text-embedding-004")
 
 # ─── RAG Settings ────────────────────────────────────────────────────────────

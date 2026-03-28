@@ -77,7 +77,7 @@
 | `BUSINESS_WEBSITE` | אתר העסק (לכרטיס ביקור דיגיטלי) | לא |
 | `TELEGRAM_BOT_USERNAME` | שם המשתמש של הבוט ללא @ (ל-QR Code ולינקי הפניות) | לא |
 | `OPENAI_BASE_URL` | כתובת ה-API — נדרש לספקים חיצוניים כמו Google Gemini (ראו .env.example) | לא |
-| `OPENAI_MODEL` | מודל LLM (ברירת מחדל: `gemini-2.5-flash`) | לא |
+| `OPENAI_MODEL` | מודל LLM (ברירת מחדל: `gemini-3.1-pro-preview`) | לא |
 | `EMBEDDING_MODEL` | מודל embeddings (ברירת מחדל: `text-embedding-004`) | לא |
 | `ADMIN_PORT` | פורט פאנל האדמין (ברירת מחדל: `5000`) | לא |
 | `FOLLOW_UP_ENABLED` | שאלות המשך חכמות — `true`/`false` (ברירת מחדל: `false`, פיצ'ר פרימיום) | לא |
